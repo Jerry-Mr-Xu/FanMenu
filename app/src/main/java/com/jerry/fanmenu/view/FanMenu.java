@@ -130,7 +130,7 @@ public class FanMenu {
     /**
      * 显示菜单
      */
-    FanMenu show(Context context, View container) {
+    FanMenu show(Context context, View container) throws RuntimeException {
         checkIsOk();
 
         Rect containerRect = new Rect();
@@ -394,7 +394,7 @@ public class FanMenu {
         /**
          * 开始动画前的准备工作
          */
-        private void initAnim() {
+        private void initAnim() throws RuntimeException {
             checkIsOk();
 
             // 设置当前动画进度为0
@@ -445,6 +445,10 @@ public class FanMenu {
             }
 
             switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    selFanIndex = -1;
+                    break;
+                }
                 case MotionEvent.ACTION_MOVE: {
                     // 处理异常情况
                     if (containerRect == null || fanAngle <= 0 || menuBitmaps == null || menuBitmaps.length <= 0 || selFanIndex >= menuBitmaps.length || fanRadius <= 0) {
@@ -473,9 +477,14 @@ public class FanMenu {
                     }
                     break;
                 }
+                case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP: {
                     if (onFanSelectedListener != null) {
                         onFanSelectedListener.onFanSelected(selFanIndex);
+                    }
+
+                    if (showAnim != null) {
+                        showAnim.end();
                     }
                     break;
                 }
@@ -486,6 +495,11 @@ public class FanMenu {
 
         @Override
         protected void onDraw(Canvas canvas) {
+            // 如果这时动画还没准备好，就先不绘制
+            if (eachAnimStartEnd == null) {
+                return;
+            }
+
             canvas.save();
             // 将坐标调整到右下角，并旋转
             canvas.translate(containerRect.width(), containerRect.height());
@@ -551,6 +565,6 @@ public class FanMenu {
     }
 
     public interface OnFanSelectedListener {
-        public void onFanSelected(int selIndex);
+        void onFanSelected(int selIndex);
     }
 }

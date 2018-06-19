@@ -32,6 +32,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        llFanContainer = findViewById(R.id.ll_container);
+        llFanContainer = (FanContainerLinearLayout) findViewById(R.id.ll_container);
     }
 }

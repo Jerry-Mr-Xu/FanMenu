@@ -69,6 +69,13 @@ public class FanContainerLinearLayout extends LinearLayout {
                 }
                 break;
             }
+            case MotionEvent.ACTION_CANCEL: {
+                // 销毁菜单
+                if (fanMenu != null) {
+                    fanMenu.onTouchEvent(ev);
+                    fanMenu.dismiss();
+                }
+            }
         }
 
         super.dispatchTouchEvent(ev);
